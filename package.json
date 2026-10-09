@@ -1,0 +1,12 @@
+{
+  "name": "clientreach",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local-first prospect research and reviewed Gmail outreach",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

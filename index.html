@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f3">
+  <title>ClientReach — thoughtful outreach</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20251f;
+      --muted: #747a70;
+      --line: #e6e8df;
+      --paper: #fff;
+      --canvas: #f7f7f3;
+      --green: #244c3b;
+      --green-light: #eaf1eb;
+      --orange: #bd6847;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1180px; padding: 28px 24px 56px; margin: auto; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 34px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px; color: #fff; background: var(--green); font-weight: 800; }
+    .brand-name { font-weight: 750; letter-spacing: -.04em; font-size: 19px; }
+    .brand-sub { margin-top: 2px; color: var(--muted); font-size: 12px; }
+    .privacy { color: var(--muted); font-size: 12px; display: flex; gap: 7px; align-items: center; }
+    .privacy span { color: var(--green); }
+    .hero { margin-bottom: 26px; }
+    .eyebrow { color: var(--orange); text-transform: uppercase; letter-spacing: .13em; font-size: 11px; font-weight: 750; }
+    h1 { font-size: clamp(28px, 4vw, 42px); letter-spacing: -.055em; line-height: 1.08; margin: 9px 0 10px; }
+    .hero p { max-width: 690px; color: var(--muted); line-height: 1.6; margin: 0; }
+    .layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 20px; align-items: start; }
+    .column { display: grid; gap: 18px; }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 3px 12px #23311c08; }
+    .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+    h2 { margin: 0; font-size: 16px; letter-spacing: -.025em; }
+    .hint { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .field { display: grid; gap: 6px; margin: 13px 0; }
+    label { font-size: 12px; color: #535a51; font-weight: 650; }
+    input, textarea, select { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 10px 11px; background: #fff; color: var(--ink); outline: none; }
+    input:focus, textarea:focus, select:focus { border-color: #71927f; box-shadow: 0 0 0 3px #244c3b12; }
+    textarea { resize: vertical; min-height: 76px; line-height: 1.5; }
+    input::placeholder, textarea::placeholder { color: #a3a79f; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .button { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 9px; padding: 9px 12px; font-size: 12px; font-weight: 700; }
+    .button:hover { background: #f6f7f2; }
+    .button.primary { color: #fff; background: var(--green); border-color: var(--green); }
+    .button.primary:hover { background: #193b2c; }
+    .button.ghost { border-color: transparent; color: var(--muted); background: transparent; }
+    .button.danger { color: #a74736; }
+    .full { width: 100%; }
+    .search-row { display: flex; gap: 8px; }
+    .search-row input { min-width: 0; }
+    .prospect-list { display: grid; gap: 8px; margin-top: 14px; max-height: 370px; overflow: auto; }
+    .prospect-item { width: 100%; text-align: left; padding: 11px 12px; border: 1px solid transparent; border-radius: 10px; background: #f8f9f6; }
+    .prospect-item:hover { border-color: var(--line); }
+    .prospect-item.selected { border-color: #9bb4a2; background: var(--green-light); }
+    .prospect-name { font-size: 13px; font-weight: 700; }
+    .prospect-company { color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .prospect-status { float: right; font-size: 10px; color: var(--green); text-transform: capitalize; }
+    .empty { color: var(--muted); font-size: 12px; line-height: 1.55; padding: 15px 4px; }
+    .research-box { border: 1px solid #e8dfd2; background: #fbf8f3; padding: 14px; border-radius: 11px; margin-top: 12px; }
+    .research-box p { color: #5e625b; font-size: 12px; line-height: 1.55; margin: 0 0 10px; }
+    .query-list { display: grid; gap: 7px; }
+    .query { font-size: 12px; color: #454b43; padding: 8px 9px; border-radius: 7px; background: #fff; border: 1px solid #eee8de; }
+    .draft-placeholder { display: grid; place-items: center; min-height: 315px; text-align: center; color: var(--muted); }
+    .placeholder-icon { font-size: 32px; margin-bottom: 8px; }
+    #draftArea { min-height: 300px; font: 13px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .draft-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .draft-tools .spacer { flex: 1; }
+    .small-note { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .notice { margin-top: 18px; padding: 12px 14px; border-radius: 10px; background: #eef2ec; color: #4e5d4f; font-size: 11px; line-height: 1.55; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #20251f; color: #fff; border-radius: 9px; padding: 10px 15px; font-size: 12px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .toast.show { opacity: 1; }
+    @media (max-width: 780px) { .layout { grid-template-columns: 1fr; } .shell { padding: 20px 14px 40px; } header { margin-bottom: 24px; } }
+    @media (max-width: 460px) { .privacy { display: none; } .two-col { grid-template-columns: 1fr; gap: 0; } .card { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <div><div class="brand-name">ClientReach</div><div class="brand-sub">A calmer way to find your next client</div></div>
+      </div>
+      <div class="privacy"><span>●</span> Runs on this device; credentials stay local</div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">Your outreach workspace</div>
+      <h1>Find the right people.<br>Start a real conversation.</h1>
+      <p>Describe what you do, identify businesses that may need it, and write a specific first email. You stay in control: review every prospect and draft before reaching out.</p>
+    </section>
+
+    <main class="layout">
+      <div class="column">
+        <section class="card">
+          <div class="card-head"><div><h2>Your work</h2><p class="hint">A little context makes the research and emails more relevant.</p></div></div>
+          <div class="field"><label for="service">What service do you offer?</label><textarea id="service" placeholder="e.g. I design fast, accessible websites"></textarea></div>
+          <div class="two-col">
+            <div class="field"><label for="audience">Ideal client / industry</label><input id="audience" placeholder="e.g. local restaurants"></div>
+            <div class="field"><label for="location">Target location</label><input id="location" placeholder="e.g. Lahore, Pakistan"></div>
+          </div>
+          <div class="field"><label for="proof">Why should they choose you?</label><textarea id="proof" placeholder="A result, experience, or strength you can genuinely support"></textarea></div>
+          <div class="field"><label for="signature">Your name / sign-off</label><input id="signature" placeholder="e.g. Aizaz"></div>
+          <button class="button full" id="saveProfile">Save my details</button>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><div><h2>Research prospects</h2><p class="hint">Search the web and inspect public business pages before contacting anyone.</p></div></div>
+          <div class="field"><label for="searchQuery">What are you looking for?</label><input id="searchQuery" placeholder="e.g. independent restaurants in Lahore with outdated websites"></div>
+          <button class="button full" id="researchButton">Search the web</button>
+          <div id="researchResults"></div>
+          <div class="notice">Search results are leads to verify, not endorsements. Add only relevant business contacts, use accurate details, and follow applicable email/privacy rules and opt-out requests.</div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div><h2>Connected services</h2><p class="hint" id="integrationStatus">Checking local integrations…</p></div></div>
+          <button class="button full" id="gmailButton">Connect Gmail</button>
+          <p class="small-note" style="margin:11px 0 0">Gmail is used only after you review a draft and confirm each individual send. Search and email credentials are stored only on this computer.</p>
+        </section>
+      </div>
+
+      <div class="column">
+        <section class="card">
+          <div class="card-head">
+            <div><h2>Your prospects</h2><p class="hint">Keep track of thoughtful, one-to-one outreach.</p></div>
+            <button class="button" id="exportButton" title="Download your prospects as CSV">Export CSV</button>
+          </div>
+          <form id="prospectForm">
+            <div class="two-col">
+              <div class="field"><label for="contactName">Contact name</label><input id="contactName" placeholder="e.g. Sam Rivera" required></div>
+              <div class="field"><label for="company">Business</label><input id="company" placeholder="e.g. Riverstone Cafe" required></div>
+            </div>
+            <div class="two-col">
+              <div class="field"><label for="role">Role (optional)</label><input id="role" placeholder="e.g. Owner"></div>
+              <div class="field"><label for="email">Email (optional)</label><input id="email" type="email" placeholder="name@business.com"></div>
+            </div>
+            <div class="field"><label for="sourceUrl">Business website / source URL (optional)</label><input id="sourceUrl" type="url" placeholder="https://business.example"></div>
+            <div class="field"><label for="observation">A specific thing you noticed</label><textarea id="observation" placeholder="e.g. Their menu is hard to read on mobile; mention only something true and relevant." required></textarea></div>
+            <div class="field"><label for="status">Outreach status</label><select id="status"><option value="to contact">To contact</option><option value="contacted">Contacted</option><option value="replied">Replied</option><option value="client">Client</option><option value="not a fit">Not a fit</option></select></div>
+            <button class="button primary full" type="submit">Add prospect</button>
+          </form>
+          <div class="field" style="margin-top:19px">
+            <label for="filter">Your list</label>
+            <div class="search-row"><input id="filter" placeholder="Find a prospect…"><button class="button" id="clearFilter" type="button">Clear</button></div>
+          </div>
+          <div id="prospectList" class="prospect-list"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><div><h2>Email draft</h2><p class="hint">Personalized from your saved details and the selected prospect.</p></div></div>
+          <div id="draftPlaceholder" class="draft-placeholder"><div><div class="placeholder-icon">✉</div><div>Select a prospect to create an email draft.</div></div></div>
+          <div id="draftContent" hidden>
+            <div class="field"><label for="subject">Subject</label><input id="subject"></div>
+            <div class="field"><label for="draftArea">Message</label><textarea id="draftArea"></textarea></div>
+            <div class="draft-tools">
+              <button class="button primary" id="copyButton">Copy email</button>
+              <button class="button" id="openMailButton">Open in email app</button>
+              <button class="button primary" id="sendButton">Send with Gmail</button>
+              <button class="button ghost danger" id="deleteButton">Delete prospect</button>
+              <span class="spacer"></span><span class="small-note">Review and edit before sending.</span>
+            </div>
+            <div class="field" style="max-width:220px;margin-top:14px"><label for="draftStatus">Update prospect status</label><select id="draftStatus"><option value="to contact">To contact</option><option value="contacted">Contacted</option><option value="replied">Replied</option><option value="client">Client</option><option value="not a fit">Not a fit</option></select></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "clientreach.v1";
+    const emptyState = { profile: { service: "", audience: "", location: "", proof: "", signature: "" }, prospects: [], selectedId: null };
+    let state = loadState();
+    let searchResults = [];
+    let googleConnected = false;
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (!saved || typeof saved !== "object") return structuredClone(emptyState);
+        return {
+          profile: { ...emptyState.profile, ...(saved.profile || {}) },
+          prospects: Array.isArray(saved.prospects) ? saved.prospects : [],
+          selectedId: saved.selectedId || null
+        };
+      } catch (error) {
+        console.error("Could not load saved ClientReach data.", error);
+        return structuredClone(emptyState);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (error) {
+        console.error("Could not save ClientReach data.", error);
+        showToast("Could not save. Check browser storage settings.");
+        return false;
+      }
+      return true;
+    }
+
+    function byId(id) { return document.getElementById(id); }
+    function showToast(message) {
+      const toast = byId("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+    }
+
+    function renderProfile() {
+      for (const key of Object.keys(state.profile)) byId(key).value = state.profile[key] || "";
+    }
+
+    function renderProspects() {
+      const query = byId("filter").value.trim().toLowerCase();
+      const matches = state.prospects.filter(p => `${p.name} ${p.company} ${p.role} ${p.email}`.toLowerCase().includes(query));
+      const list = byId("prospectList");
+      if (!matches.length) {
+        list.innerHTML = `<div class="empty">${state.prospects.length ? "No prospects match your search." : "No prospects yet. Add a business you have researched to get started."}</div>`;
+      } else {
+        list.innerHTML = matches.map(p => `
+          <button class="prospect-item ${p.id === state.selectedId ? "selected" : ""}" data-id="${escapeHtml(p.id)}" type="button">
+            <span class="prospect-status">${escapeHtml(p.status)}</span>
+            <div class="prospect-name">${escapeHtml(p.name)}</div>
+            <div class="prospect-company">${escapeHtml(p.company)}${p.role ? " · " + escapeHtml(p.role) : ""}</div>
+          </button>`).join("");
+        list.querySelectorAll(".prospect-item").forEach(button => button.addEventListener("click", () => {
+          state.selectedId = button.dataset.id;
+          saveState();
+          renderProspects();
+          renderDraft();
+        }));
+      }
+      renderDraft();
+    }
+
+    function composeDraft(prospect) {
+      const firstName = (prospect.name || "").trim().split(/\s+/)[0] || "there";
+      const profile = state.profile;
+      const greeting = `Hi ${firstName},`;
+      const observationText = prospect.observation.replace(/[.!?]+$/, "");
+      const observation = prospect.observation ? `I noticed ${observationText.charAt(0).toLowerCase()}${observationText.slice(1)}.` : "";
+      const service = profile.service.trim().replace(/[.!?]+$/, "");
+      const audience = profile.audience || "businesses like yours";
+      const offer = service ? (/^I\b/i.test(service) ? `${service} for ${audience}.` : `I offer ${service} to ${audience}.`) : "I work with businesses that may benefit from a little extra support.";
+      const proof = profile.proof ? ` ${profile.proof.trim().replace(/[.!?]+$/, "")}.` : "";
+      const ask = "Would a brief conversation be useful? If this is not relevant, no worries.";
+      const signature = profile.signature || "Your name";
+      const subject = `A quick idea for ${prospect.company}`;
+      const body = [greeting, "", observation, offer + proof, "", ask, "", `Best,\n${signature}`].filter((part, index, arr) => part !== "" || (index > 0 && arr[index - 1] !== "")).join("\n");
+      return { subject, body };
+    }
+
+    function renderDraft() {
+      const prospect = state.prospects.find(p => p.id === state.selectedId);
+      byId("draftPlaceholder").hidden = Boolean(prospect);
+      byId("draftContent").hidden = !prospect;
+      if (!prospect) return;
+      const draft = composeDraft(prospect);
+      byId("subject").value = draft.subject;
+      byId("draftArea").value = draft.body;
+      byId("draftStatus").value = prospect.status;
+      byId("sendButton").disabled = !googleConnected || prospect.status === "contacted" || prospect.status === "replied" || prospect.status === "client";
+      byId("sendButton").title = byId("sendButton").disabled ? "This prospect is already contacted; update the status only if that is incorrect." : "";
+    }
+
+    byId("saveProfile").addEventListener("click", () => {
+      for (const key of Object.keys(state.profile)) state.profile[key] = byId(key).value.trim();
+      if (saveState()) showToast("Your details are saved on this device.");
+      renderDraft();
+    });
+
+    byId("prospectForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const prospect = {
+        id: crypto.randomUUID(),
+        name: byId("contactName").value.trim(),
+        company: byId("company").value.trim(),
+        role: byId("role").value.trim(),
+        email: byId("email").value.trim(),
+        observation: byId("observation").value.trim(),
+        sourceUrl: byId("sourceUrl")?.value || "",
+        status: byId("status").value,
+        createdAt: new Date().toISOString()
+      };
+      state.prospects.unshift(prospect);
+      state.selectedId = prospect.id;
+      if (saveState()) {
+        event.target.reset();
+        renderProspects();
+        showToast("Prospect added.");
+      } else {
+        state.prospects.shift();
+        state.selectedId = null;
+      }
+    });
+
+    byId("filter").addEventListener("input", renderProspects);
+    byId("clearFilter").addEventListener("click", () => { byId("filter").value = ""; renderProspects(); });
+    byId("draftStatus").addEventListener("change", () => {
+      const prospect = state.prospects.find(p => p.id === state.selectedId);
+      if (!prospect) return;
+      prospect.status = byId("draftStatus").value;
+      if (saveState()) renderProspects();
+    });
+    byId("deleteButton").addEventListener("click", () => {
+      const index = state.prospects.findIndex(p => p.id === state.selectedId);
+      if (index < 0) return;
+      state.prospects.splice(index, 1);
+      state.selectedId = state.prospects[0]?.id || null;
+      if (saveState()) { renderProspects(); showToast("Prospect deleted."); }
+    });
+
+    byId("copyButton").addEventListener("click", async () => {
+      const text = `Subject: ${byId("subject").value}\n\n${byId("draftArea").value}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("Email copied.");
+      } catch (error) {
+        console.error("Could not access the clipboard.", error);
+        byId("draftArea").focus();
+        byId("draftArea").select();
+        showToast("Clipboard unavailable. Select and copy the text.");
+      }
+    });
+
+    byId("openMailButton").addEventListener("click", () => {
+      const prospect = state.prospects.find(p => p.id === state.selectedId);
+      if (!prospect) return;
+      const params = new URLSearchParams({ subject: byId("subject").value, body: byId("draftArea").value });
+      window.location.href = `mailto:${encodeURIComponent(prospect.email)}?${params.toString()}`;
+    });
+
+    async function refreshIntegrationStatus() {
+      try {
+        const response = await fetch("/api/status");
+        if (!response.ok) throw new Error(await response.text());
+        const status = await response.json();
+        googleConnected = status.googleConnected;
+        byId("researchButton").disabled = !status.braveConfigured;
+        byId("researchButton").textContent = status.braveConfigured ? "Search the web" : "Search setup required";
+        renderDraft();
+        byId("sendButton").title = status.googleConnected ? byId("sendButton").title : "Connect a Gmail account in the setup panel first.";
+        byId("integrationStatus").textContent = `${status.braveConfigured ? "Web search ready" : "Brave Search API key needed"} · ${status.googleConnected ? "Gmail connected" : "Gmail not connected"}`;
+        byId("gmailButton").textContent = status.googleConnected ? "Reconnect Gmail" : "Connect Gmail";
+        byId("gmailButton").disabled = !status.googleConfigured;
+        byId("gmailButton").title = status.googleConfigured ? "" : "Set up Google OAuth credentials in .env first.";
+      } catch (error) {
+        console.error("Could not check integration status.", error);
+        googleConnected = false;
+        byId("integrationStatus").textContent = "Start the ClientReach server to connect integrations.";
+        byId("researchButton").disabled = true;
+        byId("sendButton").disabled = true;
+        byId("gmailButton").disabled = true;
+        renderDraft();
+      }
+    }
+
+    byId("gmailButton").addEventListener("click", () => { window.location.href = "/api/auth/google"; });
+
+    byId("researchButton").addEventListener("click", async () => {
+      const query = byId("searchQuery").value.trim();
+      if (!query) {
+        const { audience, location, service } = state.profile;
+        byId("searchQuery").value = [audience, location, service.replace(/^I\s+/i, "")].filter(Boolean).join(" ");
+      }
+      const searchText = byId("searchQuery").value.trim();
+      if (!searchText) { byId("searchQuery").focus(); showToast("Enter an industry, service, or location to search."); return; }
+      byId("researchButton").disabled = true;
+      byId("researchButton").textContent = "Searching…";
+      byId("researchResults").textContent = "";
+      try {
+        const response = await fetch("/api/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: searchText })
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Search failed.");
+        searchResults = payload.results;
+        byId("researchResults").innerHTML = `<div class="research-box"><p><strong>${searchResults.length} web results</strong> for “${escapeHtml(payload.query)}”. Open and verify the business and contact details before using them.</p><div class="query-list">${searchResults.map((result, index) => `<div class="query"><a href="${escapeHtml(result.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(result.title)}</a><p>${escapeHtml(result.description)}</p><button type="button" class="button use-result" data-index="${index}">Use this result</button></div>`).join("")}</div></div>`;
+        byId("researchResults").querySelectorAll(".use-result").forEach(button => button.addEventListener("click", () => {
+          const result = searchResults[Number(button.dataset.index)];
+          if (!result) return;
+          byId("company").value = result.title;
+          byId("observation").value = result.description;
+          byId("sourceUrl").value = result.url;
+          byId("contactName").focus();
+          byId("prospectForm").scrollIntoView({ behavior: "smooth", block: "center" });
+        }));
+      } catch (error) {
+        console.error("Web search failed.", error);
+        byId("researchResults").textContent = error.message;
+      } finally {
+        byId("researchButton").disabled = false;
+        byId("researchButton").textContent = "Search the web";
+        refreshIntegrationStatus();
+      }
+    });
+
+    byId("sendButton").addEventListener("click", async () => {
+      const prospect = state.prospects.find(p => p.id === state.selectedId);
+      if (!prospect || !prospect.email) {
+        showToast("Add and verify a recipient email address first.");
+        byId("email").focus();
+        return;
+      }
+      const subject = byId("subject").value.trim();
+      const body = byId("draftArea").value.trim();
+      const confirmed = window.confirm(`Send this email to ${prospect.name} at ${prospect.email} using your connected Gmail account?\n\nSubject: ${subject}\n\nReview the full message in the draft box before confirming.`);
+      if (!confirmed) return;
+      byId("sendButton").disabled = true;
+      byId("sendButton").textContent = "Sending…";
+      try {
+        const response = await fetch("/api/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ to: prospect.email, subject, body })
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Gmail send failed.");
+        prospect.status = "contacted";
+        prospect.sentAt = new Date().toISOString();
+        if (saveState()) {
+          renderProspects();
+          showToast("Email sent with Gmail.");
+        }
+      } catch (error) {
+        console.error("Gmail send failed.", error);
+        showToast(error.message);
+      } finally {
+        byId("sendButton").textContent = "Send with Gmail";
+        refreshIntegrationStatus();
+        renderDraft();
+      }
+    });
+
+    function csvCell(value) { return `"${String(value || "").replace(/"/g, '""')}"`; }
+    byId("exportButton").addEventListener("click", () => {
+      if (!state.prospects.length) { showToast("Add a prospect before exporting."); return; }
+      const rows = [["Name", "Company", "Role", "Email", "Observation", "Source URL", "Status", "Added", "Sent"], ...state.prospects.map(p => [p.name, p.company, p.role, p.email, p.observation, p.sourceUrl, p.status, p.createdAt, p.sentAt])];
+      const csv = rows.map(row => row.map(csvCell).join(",")).join("\r\n");
+      const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "clientreach-prospects.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    renderProfile();
+    renderProspects();
+    refreshIntegrationStatus();
+  </script>
+</body>
+</html>
